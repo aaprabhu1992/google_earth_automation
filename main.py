@@ -46,8 +46,11 @@ if x != None and y != None:
 
 
 if paramJSON:
-    assert "type" in paramJSON, "Type parameter not provided"
-    if paramJSON["type"] == "TIMELAPSE":
-        timelapse.record(paramJSON)
-    else:
-        print("TYPE not recognized")
+    assert "data" in paramJSON, "Data parameter not provided"
+    allData = paramJSON["data"]
+    for data in allData:
+        assert "type" in data, "Type Parameter not provided"
+        if data["type"] == "TIMELAPSE":
+            timelapse.record(data)
+        else:
+            print("TYPE not recognized")

@@ -10,17 +10,31 @@ import videoCreator
 backwardDelta = [-450, 150]
 forwardDelta = [220, 150]
 imageRegion = (590, 170,2600, 1420) 
-
-
-
+searchBoxLocation = -200
+centerOfPoint = 700
 TIMELAPSE_IMAGE_NAME = "timelapse_"
 DEFAULT_VIDEO_NAME = "video"
 DEFAULT_VIDEO_CODEC = "MP4V"
 DEFAULT_VIDEO_FPS = 3
+SCROLL_AMOUNT = 30
+# There has to be only one result available for this to work
+def GoToPlace(inputPlace):
+    helper.LocateAndClick('./common/search.png', adjX = searchBoxLocation)
+    pyautogui.write(inputPlace, interval = 0.1)
+    helper.LocateAndClick('./common/searchActive.png', helper.LARGE_PAUSE)
+    helper.LocateAndClick('./common/closeSearch.png', helper.SMALL_PAUSE)
+    
 
 
 def record(inputJSON):
     helper.PauseForEffect(helper.SMALL_PAUSE)
+    if "place" in inputJSON:
+        GoToPlace(inputJSON["place"])
+    if "scroll" in inputJSON:
+        helper.LocateAndClick('./common/earth.png', helper.MEDIUM_PAUSE, adjY = centerOfPoint)
+        for i in range(0,inputJSON["scroll"]):
+            pyautogui.scroll(SCROLL_AMOUNT)
+
     assert "start_count" in inputJSON, "Need to Specify start count"
     assert "end_count" in inputJSON, "Need to Specify end count"
     assert "mode" in inputJSON, "Need to specify the mode of the timelapse (FORWARD or BACKWARD)"
