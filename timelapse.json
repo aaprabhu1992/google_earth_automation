@@ -1,0 +1,11 @@
+{
+	"type" : "TIMELAPSE",
+	"start_count" : 100,
+	"end_count" : 0,
+	"mode" : "FORWARD",
+	"image_type" : "JPEG",
+	"video" : {
+		"name" : "trial",
+		"codec" : "MP4V"
+	}
+}

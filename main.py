@@ -4,6 +4,7 @@ import pywinauto
 
 
 import helper
+import timelapse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-param',
@@ -44,4 +45,9 @@ if x != None and y != None:
     helper.LocateAndClick('./common/closeIntro.png', helper.SMALL_PAUSE)
 
 
-
+if paramJSON:
+    assert "type" in paramJSON, "Type parameter not provided"
+    if paramJSON["type"] == "TIMELAPSE":
+        timelapse.record(paramJSON)
+    else:
+        print("TYPE not recognized")
