@@ -12,11 +12,18 @@ forwardDelta = [220, 150]
 imageRegion = (590, 170,2600, 1420) 
 searchBoxLocation = -200
 centerOfPoint = 700
+
+
+
+#CONSTANTS (Independent of the screen resolution)
 TIMELAPSE_IMAGE_NAME = "timelapse_"
 DEFAULT_VIDEO_NAME = "video"
 DEFAULT_VIDEO_CODEC = "MP4V"
 DEFAULT_VIDEO_FPS = 3
 SCROLL_AMOUNT = 30
+
+
+
 # There has to be only one result available for this to work
 def GoToPlace(inputPlace):
     helper.LocateAndClick('./common/search.png', adjX = searchBoxLocation)
@@ -27,6 +34,59 @@ def GoToPlace(inputPlace):
 
 def GetMode(startVal, endVal):
     return (-1, 1)[startVal > endVal]
+    
+    
+def GetListToCapture(inputJSON, startVal, endVal):
+    listToCapture = []
+    # Capture All Steps
+    if inputJSON["type"] == "TIMELAPSE":
+        listToCapture = [i in range(startVal, endVal + GetMode(startVal, endVal), GetMode(startVal, endVal))]
+    # Capture Only Start and End
+    if inputJSON["type"] == "BNA":
+        listToCapture.append(startVal)
+        listToCapture.append(endVal)
+    return listToCapture
+    
+    
+def CreateVideoFromJSON(videoJSON):
+    videoName = DEFAULT_VIDEO_NAME
+    videoFPS = DEFAULT_VIDEO_FPS
+    videoCODEC = DEFAULT_VIDEO_CODEC
+    if "name" in videoJSON:
+        videoName = videoJSON["name"]
+    if "codec" in videoJSON:
+        videoCODEC = videoJSON["codec"]
+    if "fps" in videoJSON:
+        videoFPS = videoJSON["fps"]
+    videoCreator.CreateVideo("./", videoName, currentImageType, videoCODEC, videoFPS)
+
+
+def GoToStartPoint(startVal, endVal, x, y):
+    for i in range(0, startVal + 2 * GetMode(startVal, endVal)): # Need Extra as we are taking a snapshot after click
+        helper.ClickAndWait(x + backwardDelta[0], y + backwardDelta[1])
+            
+    helper.PauseForEffect(helper.MEDIUM_PAUSE)
+    print("Current Mode is {}".format(str(GetMode(startVal, endVal))))
+
+
+def CreateImages(startVal, endVal, stepX, stepY, listToCapture, imageName, imageNamePadding, imageType, imageSnapRegion):
+    # Click and Create image
+    for i in range(startVal, endVal + (-1) * GetMode(startVal, endVal), (-1) * GetMode(startVal, endVal)):
+        # Click
+        print("Current Step is {}".format(str(i)))
+        helper.ClickAndWait(stepX, stepY, helper.SMALL_PAUSE)
+        # Skip the ones that are not necessary
+        if i not in listToCapture:
+            continue
+        if i < 0
+            continue
+        print("Snapshot Step is {}".format(str(i)))
+        # Create image
+        pyautogui.screenshot(imageName + str(i).zfill(imageNamePadding) + imageType, region = imageSnapRegion)
+
+
+
+
 def record(inputJSON):
     helper.PauseForEffect(helper.SMALL_PAUSE)
     if "place" in inputJSON:
@@ -48,11 +108,7 @@ def record(inputJSON):
         startVal = inputJSON["start_count"]
         endVal = inputJSON["end_count"]
         assert startVal != endVal, "Start and End Cannot be the same"
-        for i in range(0, startVal + GetMode(startVal, endVal)): # Need Extra as we are taking a snapshot after click
-            helper.ClickAndWait(x + backwardDelta[0], y + backwardDelta[1])
-                
-        helper.PauseForEffect(helper.MEDIUM_PAUSE)
-        print("Current Mode is {}".format(str(GetMode(startVal, endVal))))
+        GoToStartPoint(startVal, endVal, x, y)
 
         # Preprocessing before taking snapshot
         stepX = x
@@ -63,47 +119,19 @@ def record(inputJSON):
         if GetMode(startVal, endVal) == 1:
             stepX = x + forwardDelta[0]
             stepY = y + forwardDelta[1]
-
-        listToCapture = []
-        # Capture All Steps
-        if inputJSON["type"] == "TIMELAPSE":
-            listToCapture = [i in range(startVal, endVal + GetMode(startVal, endVal), GetMode(startVal, endVal))]
-        # Capture Only Start and End
-        if inputJSON["type"] == "BNA":
-            listToCapture.append(startVal)
-            listToCapture.append(endVal)
+        listToCapture = GetListToCapture(inputJSON, startVal, endVal)
         totalPad = int(math.ceil(math.log10(max(startVal, endVal))))
         currentImageType = helper.imageTypeMap[helper.ImageType[inputJSON["image_type"]]]        
         print(listToCapture)
         
         
-        
-        # Click and Create image
-        for i in range(startVal, endVal + (-1) * GetMode(startVal, endVal), (-1) * GetMode(startVal, endVal)):
-            # Click
-            print("Current Step is {}".format(str(i)))
-            helper.ClickAndWait(stepX, stepY, helper.SMALL_PAUSE)
-            # Skip the ones that are not necessary
-            if i not in listToCapture:
-                continue
-            print("Snapshot Step is {}".format(str(i)))
-            # Create image
-            pyautogui.screenshot(TIMELAPSE_IMAGE_NAME + str(i).zfill(totalPad) + currentImageType, region = imageRegion)
+        CreateImages(startVal, endVal, stepX, stepY, listToCapture, TIMELAPSE_IMAGE_NAME, totalPad, currentImageType, imageRegion)
             
             
         # Make the video if needed
         if "video" in inputJSON:
             videoJSON = inputJSON["video"]
-            videoName = DEFAULT_VIDEO_NAME
-            videoFPS = DEFAULT_VIDEO_FPS
-            videoCODEC = DEFAULT_VIDEO_CODEC
-            if "name" in videoJSON:
-                videoName = videoJSON["name"]
-            if "codec" in videoJSON:
-                videoCODEC = videoJSON["codec"]
-            if "fps" in videoJSON:
-                videoFPS = videoJSON["fps"]
-            videoCreator.CreateVideo("./", videoName, currentImageType, videoCODEC, videoFPS)
+            CreateVideoFromJSON(videoJSON)
             
         
         # Delete the images
