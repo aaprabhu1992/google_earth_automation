@@ -62,8 +62,14 @@ def CreateVideoFromJSON(videoJSON):
 
 
 def GoToStartPoint(startVal, endVal, x, y):
-    for i in range(0, startVal + 2 * GetMode(startVal, endVal)): # Need Extra as we are taking a snapshot after click
+    count = 0
+    # Need Extra as we are taking a snapshot after click
+    # For FORWARD we should move 1 step ahead, hence range increases by 2
+    # For BACKWARD we should  go 1 step behind, hence rnage should not increase
+    for i in range(1, startVal + (1  + GetMode(startVal, endVal))): 
         helper.ClickAndWait(x + backwardDelta[0], y + backwardDelta[1])
+        count += 1
+    print("Total Clicks : {}".format(str(count)))
             
     helper.PauseForEffect(helper.MEDIUM_PAUSE)
     print("Current Mode is {}".format(str(GetMode(startVal, endVal))))
@@ -72,15 +78,15 @@ def GoToStartPoint(startVal, endVal, x, y):
 def CreateImages(startVal, endVal, stepX, stepY, listToCapture, imageName, imageNamePadding, imageType, imageSnapRegion):
     # Click and Create image
     for i in range(startVal, endVal + (-1) * GetMode(startVal, endVal), (-1) * GetMode(startVal, endVal)):
-        # Click
-        print("Current Step is {}".format(str(i)))
         helper.ClickAndWait(stepX, stepY, helper.SMALL_PAUSE)
+        # Click
+        print("Now on Click {}".format(str(i)))
         # Skip the ones that are not necessary
         if i not in listToCapture:
             continue
         if i < 0:
             continue
-        print("Snapshot Step is {}".format(str(i)))
+        print("Snapshot Click is {}".format(str(i)))
         # Create image
         pyautogui.screenshot(imageName + str(i).zfill(imageNamePadding) + imageType, region = imageSnapRegion)
 

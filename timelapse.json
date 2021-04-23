@@ -2,11 +2,11 @@
 	"data" : [
 		{
 			"type" : "BNA",
-			"start_count" : 84,
-			"end_count" : 82,
+			"start_count" : 15,
+			"end_count" : 16,
 			"image" : {
 				"image_type" : "JPEG",
-				"image_name" : "chinnaswamy"
+				"image_name" : "cci"
 			}
 		}
 	]
