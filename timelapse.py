@@ -78,17 +78,29 @@ def CreateImages(startVal, endVal, stepX, stepY, listToCapture, imageName, image
         # Skip the ones that are not necessary
         if i not in listToCapture:
             continue
-        if i < 0
+        if i < 0:
             continue
         print("Snapshot Step is {}".format(str(i)))
         # Create image
         pyautogui.screenshot(imageName + str(i).zfill(imageNamePadding) + imageType, region = imageSnapRegion)
 
 
-
+def GetImageNameAndType(imageJSON):
+    assert "image_type" in imageJSON
+    imageType = helper.imageTypeMap[helper.ImageType[imageJSON["image_type"]]]   
+    imageName = TIMELAPSE_IMAGE_NAME
+    if "image_name" in imageJSON:
+        imageName = imageJSON["image_name"]
+    return imageName, imageType
+    
+def CheckJSONForCorrectness(inputJSON):
+    assert "start_count" in inputJSON, "Need to Specify start count"
+    assert "end_count" in inputJSON, "Need to Specify end count"
+    assert "image" in inputJSON, "Image property has to be defined"
 
 def record(inputJSON):
     helper.PauseForEffect(helper.SMALL_PAUSE)
+    
     if "place" in inputJSON:
         GoToPlace(inputJSON["place"])
     if "scroll" in inputJSON:
@@ -96,9 +108,6 @@ def record(inputJSON):
         for i in range(0,inputJSON["scroll"]):
             pyautogui.scroll(SCROLL_AMOUNT)
 
-    assert "start_count" in inputJSON, "Need to Specify start count"
-    assert "end_count" in inputJSON, "Need to Specify end count"
-    assert "image_type" in inputJSON, "Need to Specify Image type for snapshot"
     
     # Locate Time Lapse
     x, y = helper.LocateImage('./common/timelapse.png')
@@ -121,11 +130,10 @@ def record(inputJSON):
             stepY = y + forwardDelta[1]
         listToCapture = GetListToCapture(inputJSON, startVal, endVal)
         totalPad = int(math.ceil(math.log10(max(startVal, endVal))))
-        currentImageType = helper.imageTypeMap[helper.ImageType[inputJSON["image_type"]]]        
-        print(listToCapture)
+        imageName, imageType = GetImageNameAndType(inputJSON["image"])
         
         
-        CreateImages(startVal, endVal, stepX, stepY, listToCapture, TIMELAPSE_IMAGE_NAME, totalPad, currentImageType, imageRegion)
+        CreateImages(startVal, endVal, stepX, stepY, listToCapture, imageName, totalPad, imageType, imageRegion)
             
             
         # Make the video if needed
@@ -137,7 +145,7 @@ def record(inputJSON):
         # Delete the images
         if inputJSON["type"] == "TIMELAPSE":
             for fileName in os.listdir('./'):
-                if fileName.endswith(currentImageType):
+                if fileName.endswith(imageType):
                     os.remove(fileName)
                 
         # Close Time Lapse
