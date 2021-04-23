@@ -123,6 +123,11 @@ def record(inputJSON):
         startVal = inputJSON["start_count"]
         endVal = inputJSON["end_count"]
         assert startVal != endVal, "Start and End Cannot be the same"
+        # When Imagery starts its on the actual date
+        # At the current date there is not image
+        # When you click BACK for the first time, it moves to the 
+        # Latest Available Imagery / Image Ticker 0
+        helper.ClickAndWait(x + backwardDelta[0], y + backwardDelta[1])
         GoToStartPoint(startVal, endVal, x, y)
 
         # Preprocessing before taking snapshot
