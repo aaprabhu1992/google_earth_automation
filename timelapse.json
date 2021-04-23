@@ -1,30 +1,10 @@
 {
 	"data" : [
 		{
-			"place" : "Columbia Country",
-			"type" : "TIMELAPSE",
-			"scroll" : 5,
-			"start_count" : 36,
-			"end_count" : 0,
-			"mode" : "FORWARD",
-			"image_type" : "JPEG",
-			"video" : {
-				"name" : "Columbia",
-				"codec" : "MP4V"
-			}
-		},
-		{
-			"place" : "Chile",
-			"type" : "TIMELAPSE",
-			"scroll" : 1,
-			"start_count" : 36,
-			"end_count" : 0,
-			"mode" : "FORWARD",
-			"image_type" : "JPEG",
-			"video" : {
-				"name" : "Chile",
-				"codec" : "MP4V"
-			}
+			"type" : "BNA",
+			"start_count" : 84,
+			"end_count" : 82,
+			"image_type" : "JPEG"
 		}
 	]
 }

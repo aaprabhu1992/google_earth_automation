@@ -52,5 +52,7 @@ if paramJSON:
         assert "type" in data, "Type Parameter not provided"
         if data["type"] == "TIMELAPSE":
             timelapse.record(data)
+        elif data["type"] == "BNA":
+            timelapse.record(data)
         else:
             print("TYPE not recognized")
