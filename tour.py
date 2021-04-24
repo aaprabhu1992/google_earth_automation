@@ -37,17 +37,12 @@ DEFAULT_VIDEO_FPS = 3
 SCROLL_AMOUNT = 30
 DEFAULT_SCREENSHOT_NAME = "screenshot_tour_.jpg"
 
-def EndReached(start, totalTime):
-    end = time.time()
-    if end - start < totalTime:
+def EndReached():
+    x, y = helper.LocateImage("./common/stopRecording.png")
+    if x != None and y != None:
         return False
     else:
         return True
-    # x, y = helper.LocateImage("./common/videoEnd.png")
-    # if x != None and y != None:
-        # return True
-    # else:
-        # return False
 
 
 def CheckJSON(inputJSON):
@@ -83,33 +78,33 @@ def OpenFile(fileName):
 
 
 
-# pyautogui.click(button='right')
-# pyautogui.press(["right"])
-# pyautogui.press(["down", "down", "down"])
 def CreateTour(inputFileName, totalTime):
     # Video Details
     pathVal, fileName = os.path.split(inputFileName)
     fileName, extension = os.path.splitext(fileName)
-    videoName = fileName + helper.videoExtensionMap[helper.VideoCodec[DEFAULT_VIDEO_CODEC]]
-    fourcc = cv2.VideoWriter_fourcc(*DEFAULT_VIDEO_CODEC)
-    out = cv2.VideoWriter(videoName, fourcc, DEFAULT_VIDEO_FPS, (IMAGE_WIDTH, IMAGE_HEIGHT))
-    count = 0
+    videoName = os.path.join(pathVal, fileName + helper.videoExtensionMap[helper.VideoCodec[DEFAULT_VIDEO_CODEC]])
 
-    start = time.time()
-    # Video Recording
-    while not EndReached(start, totalTime):
-        count += 1
-        img = pyautogui.screenshot(DEFAULT_SCREENSHOT_NAME, region = imageRegion)
-        frame = np.array(img)
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        out.write(frame)
-    print("Total Images Recorded: {}".format(str(count)))
     # Complete Recording
-    x, y = pyautogui.position()
-    helper.ClickAndWait(x + 2 * closeX, y, helper.SMALL_PAUSE)
-    helper.LocateAndClick("./common/saveTour.png", helper.SMALL_PAUSE, adjX = closeX, adjY = closeY)
-    helper.PauseForEffect(helper.SMALL_PAUSE)
-    out.release()
+    x, y = helper.LocateImage("./common/saveTour.png")
+    if x != None and y != None:
+        helper.ClickAndWait(x, y, helper.SMALL_PAUSE)
+        pyautogui.write("Tour")
+        helper.PauseForEffect(helper.SMALL_PAUSE)
+        pyautogui.press(["enter"])
+        helper.PauseForEffect(helper.SMALL_PAUSE)
+        helper.ClickAndWait(x + closeX, y + closeY, helper.SMALL_PAUSE)
+        pyautogui.hotkey("alt", "t")
+        pyautogui.press(["down", "down", "down"])
+        pyautogui.press(["enter"])
+        helper.PauseForEffect(helper.SMALL_PAUSE)
+        pyautogui.press(["tab", "tab"])
+        pyautogui.write(videoName)
+        helper.LocateAndClick("./common/createMovie.png", helper.SMALL_PAUSE)
+        
+        
+    
+    
+    
    
 def CleanUp():
     x, y = helper.LocateImage("./common/tempPlacesSelected.png")
@@ -139,6 +134,9 @@ def CreateAndRecord(inputFileName, inputDate, totalTime):
     helper.PauseForEffect(helper.SMALL_PAUSE)
     RecordTour(fileName, totalTime)
     helper.PauseForEffect(helper.SMALL_PAUSE)
+    # Check Every Few Interval if the recording has stopped
+    while not EndReached():
+        helper.PauseForEffect(helper.MEDIUM_PAUSE)
     CleanUp()
 
 
