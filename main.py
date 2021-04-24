@@ -5,6 +5,7 @@ import pywinauto
 
 import helper
 import timelapse
+import tour
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-param',
@@ -54,5 +55,7 @@ if paramJSON:
             timelapse.record(data)
         elif data["type"] == "BNA":
             timelapse.record(data)
+        elif data["type"] == "TOUR":
+            tour.record(data)
         else:
             print("TYPE not recognized")

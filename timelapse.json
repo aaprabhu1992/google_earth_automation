@@ -1,13 +1,12 @@
 {
 	"data" : [
 		{
-			"type" : "BNA",
-			"start_count" : 15,
-			"end_count" : 16,
-			"image" : {
-				"image_type" : "JPEG",
-				"image_name" : "cci"
-			}
+			"type" : "TOUR",
+			"time" : 480,
+			"file" : "C:\\Users\\Admin\\Downloads\\TimeLapses\\Delhi-Meerut\\Delhi-Merut.kml",
+			"dates" : [
+				"2020-12-22"
+			]
 		}
 	]
 }
