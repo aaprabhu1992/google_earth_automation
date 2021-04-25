@@ -159,7 +159,7 @@ def record(inputJSON):
             
         
         # Delete the images
-        if inputJSON["type"] == "TIMELAPSE":
+        if inputJSON["type"] == "TIMELAPSE" and "video" in inputJSON:
             for fileName in os.listdir('./'):
                 if fileName.endswith(imageType):
                     os.remove(fileName)

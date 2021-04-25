@@ -7,7 +7,8 @@ def CreateVideo(folderPath, videoName, currentImageType, videoCODEC, videoFPS):
     videoExtension = helper.videoExtensionMap[helper.VideoCodec[videoCODEC]]
     videoName += videoExtension
     img_array = []
-    for filename in glob.glob(folderPath + "/*" + currentImageType):
+    for filename in sorted(glob.glob(folderPath + "/*" + currentImageType), reverse = True):
+        print(filename)
         img = cv2.imread(filename)
         height, width, layers = img.shape
         size = (width,height)
