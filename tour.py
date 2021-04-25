@@ -13,11 +13,8 @@
 import pyautogui
 import math
 import os
-from PIL import ImageChops
-import cv2
-import numpy as np
-import glob
 import time
+import re
 
 import helper
 import videoCreator
@@ -64,6 +61,8 @@ def CreateNewKMLFile(inputFileName, inputDate):
         lines = f.readlines()
     newLines = []
     for line in lines:
+        if "when" in line:
+            line = re.sub("<when>(.*)</when>", "<when>"+ inputDate +"</when>", line)
         newLines.append(line)
     with open(newFileName, "w") as f:
         f.writelines(newLines)
@@ -107,7 +106,7 @@ def CreateTour(inputFileName, totalTime):
     
    
 def CleanUp():
-    x, y = helper.LocateImage("./common/tempPlacesSelected.png")
+    x, y = helper.LocateImage("./common/tempPlacesNotSelected.png")
     if x != None and y != None:
         helper.ClickAndWait(x, y, helper.SMALL_PAUSE)
         pyautogui.click(button = 'right')

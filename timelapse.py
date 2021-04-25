@@ -40,7 +40,9 @@ def GetListToCapture(inputJSON, startVal, endVal):
     listToCapture = []
     # Capture All Steps
     if inputJSON["type"] == "TIMELAPSE":
-        listToCapture = [i in range(startVal, endVal + GetMode(startVal, endVal), GetMode(startVal, endVal))]
+        print(startVal, endVal)
+        for i in range(startVal, endVal + GetMode(startVal, endVal), (-1) * GetMode(startVal, endVal)):
+            listToCapture.append(i)
     # Capture Only Start and End
     if inputJSON["type"] == "BNA":
         listToCapture.append(startVal)
@@ -48,7 +50,7 @@ def GetListToCapture(inputJSON, startVal, endVal):
     return listToCapture
     
     
-def CreateVideoFromJSON(videoJSON):
+def CreateVideoFromJSON(videoJSON, currentImageType):
     videoName = DEFAULT_VIDEO_NAME
     videoFPS = DEFAULT_VIDEO_FPS
     videoCODEC = DEFAULT_VIDEO_CODEC
@@ -109,6 +111,8 @@ def record(inputJSON):
     
     if "place" in inputJSON:
         GoToPlace(inputJSON["place"])
+    if "cooridnate" in inputJSON:
+        GoToPlace(inputJSON["cooridnate"])
     if "scroll" in inputJSON:
         helper.LocateAndClick('./common/earth.png', helper.MEDIUM_PAUSE, adjY = centerOfPoint)
         for i in range(0,inputJSON["scroll"]):
@@ -140,6 +144,7 @@ def record(inputJSON):
             stepX = x + forwardDelta[0]
             stepY = y + forwardDelta[1]
         listToCapture = GetListToCapture(inputJSON, startVal, endVal)
+        print(listToCapture)
         totalPad = int(math.ceil(math.log10(max(startVal, endVal))))
         imageName, imageType = GetImageNameAndType(inputJSON["image"])
         
@@ -150,7 +155,7 @@ def record(inputJSON):
         # Make the video if needed
         if "video" in inputJSON:
             videoJSON = inputJSON["video"]
-            CreateVideoFromJSON(videoJSON)
+            CreateVideoFromJSON(videoJSON, imageType)
             
         
         # Delete the images
