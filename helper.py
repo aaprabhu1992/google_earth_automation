@@ -2,6 +2,7 @@ import json
 import time
 import pyautogui
 from enum import Enum
+import winsound
 
 MIN_SLEEP_TIME = 10
 
@@ -30,7 +31,10 @@ class VideoCodec (Enum):
 videoExtensionMap = {}
 videoExtensionMap[VideoCodec['MP4V']] = ".mp4"
 videoExtensionMap[VideoCodec['XVID']] = ".avi"
-
+def Beep():
+    duration = 1000  # milliseconds
+    freq = 440  # Hz
+    winsound.Beep(freq, duration)
 
 def PrettyPrintJSON(jsonObj, jsonIndent = 3):
     print(json.dumps(jsonObj, indent = jsonIndent))

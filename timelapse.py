@@ -41,7 +41,7 @@ def GetListToCapture(inputJSON, startVal, endVal):
     # Capture All Steps
     if inputJSON["type"] == "TIMELAPSE":
         print(startVal, endVal)
-        for i in range(startVal, endVal + GetMode(startVal, endVal), (-1) * GetMode(startVal, endVal)):
+        for i in range(startVal, endVal + (-1) * GetMode(startVal, endVal), (-1) * GetMode(startVal, endVal)):
             listToCapture.append(i)
     # Capture Only Start and End
     if inputJSON["type"] == "BNA":
@@ -159,10 +159,11 @@ def record(inputJSON):
             
         
         # Delete the images
-        if inputJSON["type"] == "TIMELAPSE" and "video" in inputJSON:
-            for fileName in os.listdir('./'):
-                if fileName.endswith(imageType):
-                    os.remove(fileName)
+        if "delete" in inputJSON["image"] and inputJSON["image"]["delete"] == "Yes":
+            if inputJSON["type"] == "TIMELAPSE" and "video" in inputJSON:
+                for fileName in os.listdir('./'):
+                    if fileName.endswith(imageType):
+                        os.remove(fileName)
                 
         # Close Time Lapse
         helper.ClickAndWait(x, y)
